@@ -1,35 +1,25 @@
-| Supported Targets | ESP32 | ESP32-C2 | ESP32-C3 | ESP32-C6 | ESP32-H2 | ESP32-P4 | ESP32-S2 | ESP32-S3 |
-| ----------------- | ----- | -------- | -------- | -------- | -------- | -------- | -------- | -------- |
+# Proyecto ECG con ESP32 y Red Neuronal U-NET para Filtrado de Ruido
 
-# _Sample project_
+Este proyecto se centra en el desarrollo de un  electrocardiograma (ECG) basado en un microcontrolador ESP32. El sistema captura señales cardíacas, las procesa y las transmite a través de un servidor TCP a un ordenador. En el ordenador, una red neuronal con estructura U-NET filtra el ruido de la señal, y se visualizan en tiempo real tanto la señal cruda como la señal filtrada.
 
-(See the README.md file in the upper level 'examples' directory for more information about examples.)
+## Características Principales
 
-This is the simplest buildable example. The example is used by command `idf.py create-project`
-that copies the project to user specified path and set it's name. For more information follow the [docs page](https://docs.espressif.com/projects/esp-idf/en/latest/api-guides/build-system.html#start-a-new-project)
+* **Captura de ECG:** Utiliza un biosensor (inicialmente AD8232, con planes de migración a AD8233) para adquirir la señal de ECG. La señal es leída por un ADC y enviada al ESP32.
+* **Procesamiento en ESP32:** El ESP32 se encarga de leer los datos del ADC, realizar un preprocesamiento inicial (remuestreo mediante interpolación lineal) y gestionar la comunicación.
+* **Comunicación TCP:** Los datos procesados se envían a un servidor TCP implementado en un PC.
+* **Filtrado con Red Neuronal U-NET:** Una red U-NET que se ejecuta en el PC recibe los datos y realiza el filtrado de ruido.
+* **Visualización en Tiempo Real:** Una aplicación en el PC grafica simultáneamente la señal de ECG cruda (convertida a milivoltios) y la señal tras pasar por la inferencia de la U-NET.
+* **Conectividad:** El ESP32 se conecta al ordenador a través de un conversor UART a Serie (CP210x) para programación y depuración, y mediante Wi-Fi para la transmisión de datos TCP.
 
+## Flujo de Trabajo del Proyecto
 
+1.  **Adquisición de Señal:** El sensor AD8232/AD8233 capta la actividad eléctrica del corazón.
+2.  **Lectura y Digitalización:** El ESP32 lee la señal digital del ADC1115 a través de un una interfaz I2C y la prepara para preprocesar.
+3.  **Procesamiento en el Embebido:** El ESP32 aplica interpolación lineal para ajustar la frecuencia de muestreo.
+4.  **Transmisión TCP:** El ESP32 envía los datos procesados al servidor TCP en el PC.
+5.  **Inferencia U-NET:** El servidor Python en el PC recibe los datos, y los introduce en la red U-NET para eliminar el ruido.
+6.  **Visualización:** Se muestran dos gráficas en tiempo real: la señal cruda en mV y la señal filtrada por la U-NET.
 
-## How to use example
-We encourage the users to use the example as a template for the new projects.
-A recommended way is to follow the instructions on a [docs page](https://docs.espressif.com/projects/esp-idf/en/latest/api-guides/build-system.html#start-a-new-project).
+## Estado del Proyecto
 
-## Example folder contents
-
-The project **sample_project** contains one source file in C language [main.c](main/main.c). The file is located in folder [main](main).
-
-ESP-IDF projects are built using CMake. The project build configuration is contained in `CMakeLists.txt`
-files that provide set of directives and instructions describing the project's source files and targets
-(executable, library, or both). 
-
-Below is short explanation of remaining files in the project folder.
-
-```
-├── CMakeLists.txt
-├── main
-│   ├── CMakeLists.txt
-│   └── main.c
-└── README.md                  This is the file you are currently reading
-```
-Additionally, the sample project contains Makefile and component.mk files, used for the legacy Make based build system. 
-They are not used or needed when building with CMake and idf.py.
+Actualmente, el sistema es capaz de capturar, transmitir y visualizar los datos. Se está trabajando en el rediseño del hardware para mejorar la portabilidad y reducir el ruido, así como en la posible integración de la inferencia de la U-NET directamente en un ESP32-S3.
