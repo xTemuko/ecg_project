@@ -29,7 +29,7 @@ Se inició un rediseño del hardware con los siguientes objetivos principales:
 
 3.  **Actualización del Microcontrolador:**
     * Sustituir el ESP32 estándar por un **ESP32-S3**.
-    * **Objetivo:** La principal motivación para este cambio es la capacidad del ESP32-S3 para ejecutar modelos de machine learning más complejos directamente en el dispositivo (TinyML), con la intención de **embebber la red U-NET** para el filtrado de ruido en el propio microcontrolador en futuras iteraciones.
+    * **Objetivo:** La principal motivación para este cambio es la capacidad del ESP32-S3 para ejecutar modelos de machine learning más complejos directamente en el dispositivo (TinyML), con la intención de **incorporar la red U-NET** para el filtrado de ruido en el propio microcontrolador en futuras iteraciones.
 
 ## Problemas Encontrados en el Rediseño
 
@@ -45,7 +45,7 @@ Debido a los problemas de estabilidad causados por el MP2161GJ, el enfoque actua
 1.  **Rediseño del Sistema de Alimentación:**
     * Investigar y seleccionar un regulador de voltaje alternativo que genere menos ruido.
     * Se considera el uso de un **LDO (Low-Dropout Regulator)** en lugar de un convertidor DC-DC conmutado para la alimentación del ESP32-S3 y los componentes analógicos sensibles. Aunque los LDOs son menos eficientes energéticamente que los convertidores conmutados, su salida es considerablemente más limpia y con menos ruido, lo cual es crucial para aplicaciones con señales analógicas sensibles como el ECG.
-    * Revisar el layout de la PCB para mejorar el filtrado de la alimentación y el desacoplo de los componentes.
+
 
 2.  **Validación del AD8233:** Una vez estabilizada la alimentación, proceder con la integración y prueba exhaustiva del AD8233 con la nueva configuración de ganancia.
 
