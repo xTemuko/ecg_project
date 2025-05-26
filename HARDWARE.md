@@ -1,6 +1,6 @@
 # Documentación del Hardware del Dispositivo ECG
 
-Este documento detalla el diseño del hardware, los intentos de rediseño y los desafíos encontrados en el proyecto ECG basado en ESP32.
+Este documento detalla el diseño del hardware, el rediseño y los problemas encontrados.
 
 ## Prototipo Inicial
 
@@ -10,7 +10,7 @@ El primer prototipo del dispositivo se basó en los siguientes componentes princ
 * **Sensor ECG:** Módulo AD8232.
     * Ganancia configurada típicamente en 100 (interna del chip) multiplicada por la ganancia de las etapas de instrumentación y filtro, resultando en una ganancia total elevada (ej. ~1000).
 * **Comunicación/Programación:** Conversor UART a Serie CP210x externo para la conexión con el PC.
-* **Alimentación:** Directa a través del puerto USB o fuente de alimentación externa durante el desarrollo.
+* **Alimentación:** Directa a través del puerto USB.
 
 ## Rediseño del Hardware (Versión 2 - En Desarrollo)
 
@@ -24,8 +24,8 @@ Se inició un rediseño del hardware con los siguientes objetivos principales:
         * **DW01A:** Circuito de protección para la batería (contra sobrecarga, sobredescarga y sobrecorriente).
 
 2.  **Mejora de la Señal de ECG y Reducción de Ruido:**
-    * **Sustitución del Sensor:** Cambiar el módulo AD8232 por el chip **AD8233**. El AD8233 ofrece más flexibilidad y es un componente más moderno.
-    * **Reducción de Ganancia:** Ajustar la ganancia de la etapa de amplificación para evitar la saturación de la señal. Se planteó reducir la ganancia total de aproximadamente 1000 a alrededor de **200**. Esto se lograría modificando los valores de las resistencias externas que configuran los amplificadores operacionales del circuito de acondicionamiento de señal del AD8233.
+    * **Sustitución del Sensor:** Cambiar el módulo AD8232 por el chip **AD8233**. El AD8233 ofrece más flexibilidad y es una revisión del  componente reciente.
+    * **Reducción de Ganancia:** Ajustar la ganancia de la etapa de amplificación para evitar la saturación de la señal. Se planteó reducir la ganancia total de aproximadamente 1000 a **200**.
 
 3.  **Actualización del Microcontrolador:**
     * Sustituir el ESP32 estándar por un **ESP32-S3**.

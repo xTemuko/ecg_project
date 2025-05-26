@@ -7,7 +7,7 @@ Este documento describe el proceso de adquisición y análisis de datos para el 
 La robustez de la red neuronal U-NET para la eliminación de ruido en señales de ECG depende en gran medida de la calidad de los datos de entrenamiento.
 
 1.  **Base de Datos de Referencia:**
-    * Se utilizaron datos de la base de datos **MIT-BIH Arrhythmia Database**. Esta es una colección ampliamente reconocida y utilizada de grabaciones de ECG, que incluye una variedad de ritmos cardíacos y artefactos.
+    * Se utilizaron datos de la base de datos **MIT-BIH Arrhythmia Database**. Esta es la colección más usada de grabaciones de ECG, que incluye una variedad de ritmos cardíacos y artefactos.
 
 2.  **Generación de Ruido Artificial:**
     * Para entrenar la U-NET se añadió ruido de forma artificial a las señales limpias de la base de datos MIT.
@@ -19,7 +19,7 @@ La robustez de la red neuronal U-NET para la eliminación de ruido en señales d
     * El objetivo era crear pares de datos: (señal ruidosa aritificial, señal limpia original) para el entrenamiento supervisado de la U-NET.
 
 3.  **Segmentación de Datos:**
-    * Las señales de ECG (tanto las limpias como las ruidosas) se segmentaron en ventanas de tamaño fijo, correspondientes al tamaño de entrada esperado por la arquitectura U-NET (por ejemplo, 720 muestras).
+    * Las señales de ECG (tanto las limpias como las ruidosas) se segmentaron en ventanas de tamaño fijo, correspondientes al tamaño de entrada esperado por la arquitectura U-NET de 720 muestras.
 
 ## Arquitectura del Software en ESP32 (FreeRTOS)
 
@@ -36,7 +36,7 @@ La función principal `app_main()` se encarga de:
     * `buf_full_queue`: Una cola para enviar los índices de los buffers que se han llenado de datos crudos.
     * `buf_free_queue`: Una cola para enviar los índices de los buffers que han sido procesados y están listos para ser reutilizados.
     Inicialmente, los índices de ambos buffers se añaden a `buf_free_queue`.
-5.  **Creación y Lanzamiento de Tareas:** Se crean y asignan dos tareas principales, cada una anclada a un núcleo diferente del ESP32 para un procesamiento paralelo óptimo:
+5.  **Creación y Lanzamiento de Tareas:** Se crean y asignan dos tareas principales, cada una anclada a un núcleo diferente del ESP32 para un procesamiento paralelo:
     * **Tarea de Adquisición de ADC (Core 1):** `adc_capture_task()`
     * **Tarea de Procesamiento y Envío (Core 2):** `data_processing_task()`
 
@@ -66,7 +66,7 @@ Esta tarea se encarga de procesar los datos y enviarlos al cliente TCP:
 5.  **Futura Implementación de U-NET:**
     * Está previsto que en esta sección de la tarea del Core 2 se integre la inferencia de la red U-NET si se ejecuta directamente en el ESP32-S3. Actualmente, la inferencia se realiza en el PC.
 
-**Gestión de Buffers (Ping-Pong):**
+**Gestión de Buffers:**
 El uso de dos buffers y dos colas implementa un mecanismo de "ping-pong buffering". Mientras un buffer se está llenando con nuevas muestras en el Core 1, el Core 2 puede estar procesando y enviando el contenido del otro buffer. Esto asegura que no se pierdan datos durante el procesamiento y la transmisión, optimizando el flujo continuo de datos.
 
 ## Aplicación en el PC (Servidor TCP y Visualización)
@@ -79,7 +79,7 @@ El script en Python que se ejecuta en el PC actúa como:
 
 2.  **Decodificación y Conversión:**
     * Decodifica los bytes recibidos en un array de valores `int16_t`.
-    * **Convierte estas lecturas ADC a milivoltios (mV)** basándose en la resolución del ADC y el voltaje de referencia configurado.
+    * **Convierte estas lecturas ADC a milivoltios (mV)** basándose en la resolución del ADC (16 bits) y el voltaje de referencia configurado (+- 4.096 V).
 
 3.  **Inferencia con U-NET:**
     * Los datos se preparan para la entrada de la red U-NET.
@@ -88,6 +88,6 @@ El script en Python que se ejecuta en el PC actúa como:
 
 4.  **Visualización en Tiempo Real:**
     * Utiliza `matplotlib` con `FuncAnimation` para actualizar dos gráficos en tiempo real:
-        * **Gráfico 1:** Muestra la señal de ECG cruda (convertida a mV/V).
+        * **Gráfico 1:** Muestra la señal de ECG original (convertida a mV/V).
         * **Gráfico 2:** Muestra la señal de ECG después de pasar por la inferencia de la U-NET.
     * Ambos gráficos se actualizan a medida que llegan nuevos paquetes de datos del ESP32.
