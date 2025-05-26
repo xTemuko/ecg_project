@@ -8,7 +8,7 @@ El primer prototipo del dispositivo se basó en los siguientes componentes princ
 
 * **Microcontrolador:** ESP32 (módulo estándar).
 * **Sensor ECG:** Módulo AD8232.
-    * Ganancia configurada típicamente en 100 (interna del chip) multiplicada por la ganancia de las etapas de instrumentación y filtro, resultando en una ganancia total elevada (ej. ~1000).
+    * Ganancia configurada típicamente en 100 (interna del chip) multiplicada por la ganancia de las etapas de instrumentación y filtro, resultando en una ganancia de 1000.
 * **Comunicación/Programación:** Conversor UART a Serie CP210x externo para la conexión con el PC.
 * **Alimentación:** Directa a través del puerto USB.
 
