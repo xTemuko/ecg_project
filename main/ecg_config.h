@@ -14,8 +14,8 @@ extern "C" {
 #define DOWNSAMPLED_SAMPLES 720   /**< Número de muestras tras reducción de muestreo (downsampling) */
 
 #define I2C_MASTER_NUM      I2C_NUM_0        // Puerto I2C
-#define I2C_MASTER_SDA_IO   21              // Pin SDA
-#define I2C_MASTER_SCL_IO   22              // Pin SCL
+#define I2C_MASTER_SDA_IO   8              // Pin SDA
+#define I2C_MASTER_SCL_IO   9              // Pin SCL
 #define I2C_MASTER_FREQ_HZ  400000          // Frecuencia I2C 400kHz
 #define ADS1115_ADDR        0x48            // Dirección I2C del ADS1115 (ADDR a GND)
 #define ADS1115_REG_CONFIG  0x01            // Registro de configuración
