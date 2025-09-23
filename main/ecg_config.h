@@ -20,6 +20,8 @@ extern "C" {
 #define ADS1115_ADDR        0x48            // Dirección I2C del ADS1115 (ADDR a GND)
 #define ADS1115_REG_CONFIG  0x01            // Registro de configuración
 #define ADS1115_REG_CONV    0x00   
+#define SDN_AD8233          12              // Pin de apagado del AD8233
+
 
 extern int tcp_socket;
 

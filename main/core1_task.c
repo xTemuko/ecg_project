@@ -5,6 +5,7 @@
 #include "driver/i2c.h"
 #include "esp_log.h"
 #include "ecg_config.h"
+#include "driver/gpio.h"
 
 
 static const char *TAG_ADC = "ADC_Task";
@@ -28,6 +29,25 @@ static esp_err_t ads1115_read_conversion(int16_t *out_value) {
     }
     return err;
 }
+
+
+void configure_ad8233_sdn_pin(void) {
+    gpio_config_t io_conf;
+    // Deshabilitar interrupciones
+    io_conf.intr_type = GPIO_INTR_DISABLE;
+    // Configurar como modo de salida
+    io_conf.mode = GPIO_MODE_OUTPUT;
+    // Máscara de bits de los pines a configurar (solo el pin 12)
+    io_conf.pin_bit_mask = (1ULL << SDN_AD8233);
+    // Deshabilitar pull-down
+    io_conf.pull_down_en = 0;
+    // Deshabilitar pull-up
+    io_conf.pull_up_en = 0;
+    // Aplicar la configuración
+    gpio_config(&io_conf);
+    ESP_LOGI("AD8233_CTRL", "Pin SDN (GPIO %d) configurado como salida.", SDN_AD8233);
+}
+
 
 void core1_adc_task(void *arg) {
     // Configurar ADS1115: modo continuo, AIN0, PGA ±4.096V, 475SPS, sin comparador
@@ -53,6 +73,11 @@ void core1_adc_task(void *arg) {
 
     const TickType_t tick_interval = pdMS_TO_TICKS(2);  // ~2 ms entre lecturas (~475Hz)
     TickType_t next_wake = xTaskGetTickCount();
+
+    configure_ad8233_sdn_pin();
+    ESP_LOGI(TAG_ADC, "Activando el sensor AD8233...");
+    gpio_set_level(SDN_AD8233, 1);
+    vTaskDelay(pdMS_TO_TICKS(1000));
 
     // Bucle principal de adquisición
     while (1) {
